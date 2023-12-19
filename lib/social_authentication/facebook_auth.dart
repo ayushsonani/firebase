@@ -7,11 +7,9 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MaterialApp(
-  home: FaceBookSignup(),
+    home: FaceBookSignup(),
     debugShowCheckedModeBanner: false,
   ));
 }
@@ -29,16 +27,22 @@ class _FaceBookSignupState extends State<FaceBookSignup> {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
-        child: ElevatedButton(onPressed: () async {
-          final LoginResult loginResult = await FacebookAuth.instance.login();
+        child: ElevatedButton(
+            onPressed: () async {
+              final LoginResult loginResult =
+                  await FacebookAuth.instance.login();
 
-          final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
+              final OAuthCredential facebookAuthCredential =
+                  FacebookAuthProvider.credential(
+                      loginResult.accessToken!.token);
 
-          FirebaseAuth.instance.signInWithCredential(facebookAuthCredential).then((value){
-            print("you are login");
-          });
-
-        }, child: Text("FaceBook")),
+              FirebaseAuth.instance
+                  .signInWithCredential(facebookAuthCredential)
+                  .then((value) {
+                print("you are login");
+              });
+            },
+            child: Text("FaceBook")),
       ),
     );
   }
