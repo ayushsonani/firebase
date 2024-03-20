@@ -45,7 +45,8 @@ dependencies:
   flutter_facebook_auth:
   firebase_messaging: ^14.7.8
   flutter_local_notifications: ^16.2.0
-  app_settings: ^5.1.1
+
+#  app_settings: ^5.1.1
 
 dev_dependencies:
   flutter_test:

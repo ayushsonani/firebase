@@ -5,35 +5,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
- Future<void>  background_notification(RemoteMessage massage) async {
+Future<void> background_notification(RemoteMessage massage) async {
   await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
+      options: DefaultFirebaseOptions.currentPlatform
   );
-   FirebaseMessaging.onBackgroundMessage(background_notification);
+  FirebaseMessaging.onBackgroundMessage(background_notification);
   runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: NotificationSendFirebase(),
-    )
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: NotificationSendFirebase(),
+      )
   );
 }
-
-
-
 
 
 class NotificationSendFirebase extends StatefulWidget {
   const NotificationSendFirebase({super.key});
 
   @override
-  State<NotificationSendFirebase> createState() => _NotificationSendFirebaseState();
+  State<NotificationSendFirebase> createState() =>
+      _NotificationSendFirebaseState();
 }
 
 class _NotificationSendFirebaseState extends State<NotificationSendFirebase> {
@@ -49,50 +47,50 @@ class _NotificationSendFirebaseState extends State<NotificationSendFirebase> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 
-  notification_permission(){
+  notification_permission() {
     FirebaseMessaging.instance.requestPermission();
     get_token();
-
   }
 
   getnotification() async {
+    AndroidNotificationChannel channel = AndroidNotificationChannel(
+        "Ayush", "SonaniAyushMukeshbhai", description: "hello",
+        importance: Importance.max);
 
-    AndroidNotificationChannel channel = AndroidNotificationChannel("Ayush", "SonaniAyushMukeshbhai",description: "hello",importance: Importance.max);
+    await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(
+        channel);
 
-   await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
+    FirebaseMessaging.onMessage.listen((event) {
+      InitializationSettings settings = InitializationSettings(
+          android: AndroidInitializationSettings("@mipmap/ic_launcher")
+      );
 
-   FirebaseMessaging.onMessage.listen((event) {
-
-     InitializationSettings settings = InitializationSettings(
-       android: AndroidInitializationSettings("@mipmap/ic_launcher")
-     );
-
-     flutterLocalNotificationsPlugin.initialize(settings,
-       onDidReceiveNotificationResponse: (details) {
-       // click notification to that line run
-       Navigator.push(context, MaterialPageRoute(builder: (context) {
-         return  NotificationClickPage();
-       },));     },
-       onDidReceiveBackgroundNotificationResponse: (details) {
-       // click notification in background that line run
-       Navigator.push(context, MaterialPageRoute(builder: (context) {
-         return  NotificationClickPage();
-       },));
-     },);
-     flutterLocalNotificationsPlugin.show(event.hashCode, event.notification?.title, event.notification?.body, NotificationDetails(
-       android: AndroidNotificationDetails(channel.id, channel.name)
-     ));
-
-
-
-   });
-
+      flutterLocalNotificationsPlugin.initialize(settings,
+        onDidReceiveNotificationResponse: (details) {
+          // click notification to that line run
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return NotificationClickPage();
+          },));
+        },
+        onDidReceiveBackgroundNotificationResponse: (details) {
+          // click notification in background that line run
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return NotificationClickPage();
+          },));
+        },);
+      flutterLocalNotificationsPlugin.show(
+          event.hashCode, event.notification?.title, event.notification?.body,
+          NotificationDetails(
+              android: AndroidNotificationDetails(channel.id, channel.name)
+          ));
+    });
   }
 
   get_token() async {
-   String? token = await  FirebaseMessaging.instance.getToken();
+    String? token = await FirebaseMessaging.instance.getToken();
 
-   print("Token is :============== ${token}");
+    print("Token is :============== ${token}");
   }
 
   @override
